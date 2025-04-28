@@ -1,0 +1,122 @@
+import { MigrationInterface, QueryRunner } from "typeorm";
+
+export class AddSkillsToUsers1745646648517 implements MigrationInterface {
+    name = 'AddSkillsToUsers1745646648517'
+
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`ALTER TABLE \`messages\` DROP FOREIGN KEY \`messages_ibfk_1\``);
+        await queryRunner.query(`ALTER TABLE \`messages\` DROP FOREIGN KEY \`messages_ibfk_2\``);
+        await queryRunner.query(`ALTER TABLE \`messages\` DROP FOREIGN KEY \`messages_ibfk_3\``);
+        await queryRunner.query(`ALTER TABLE \`projects\` DROP FOREIGN KEY \`projects_ibfk_1\``);
+        await queryRunner.query(`ALTER TABLE \`projects\` DROP FOREIGN KEY \`projects_ibfk_2\``);
+        await queryRunner.query(`ALTER TABLE \`bids\` DROP FOREIGN KEY \`bids_ibfk_1\``);
+        await queryRunner.query(`ALTER TABLE \`bids\` DROP FOREIGN KEY \`bids_ibfk_2\``);
+        await queryRunner.query(`ALTER TABLE \`files\` DROP FOREIGN KEY \`files_ibfk_1\``);
+        await queryRunner.query(`ALTER TABLE \`files\` DROP FOREIGN KEY \`files_ibfk_2\``);
+        await queryRunner.query(`ALTER TABLE \`milestones\` DROP FOREIGN KEY \`milestones_ibfk_1\``);
+        await queryRunner.query(`ALTER TABLE \`invoices\` DROP FOREIGN KEY \`invoices_ibfk_1\``);
+        await queryRunner.query(`DROP INDEX \`project_id\` ON \`messages\``);
+        await queryRunner.query(`DROP INDEX \`receiver_id\` ON \`messages\``);
+        await queryRunner.query(`DROP INDEX \`sender_id\` ON \`messages\``);
+        await queryRunner.query(`DROP INDEX \`client_id\` ON \`projects\``);
+        await queryRunner.query(`DROP INDEX \`freelancer_id\` ON \`projects\``);
+        await queryRunner.query(`DROP INDEX \`email\` ON \`users\``);
+        await queryRunner.query(`DROP INDEX \`freelancer_id\` ON \`bids\``);
+        await queryRunner.query(`DROP INDEX \`project_id\` ON \`bids\``);
+        await queryRunner.query(`DROP INDEX \`project_id\` ON \`files\``);
+        await queryRunner.query(`DROP INDEX \`user_id\` ON \`files\``);
+        await queryRunner.query(`DROP INDEX \`project_id\` ON \`milestones\``);
+        await queryRunner.query(`DROP INDEX \`milestone_id\` ON \`invoices\``);
+        await queryRunner.query(`DROP INDEX \`name\` ON \`skills\``);
+        await queryRunner.query(`ALTER TABLE \`users\` DROP COLUMN \`profile_image\``);
+        await queryRunner.query(`ALTER TABLE \`users\` ADD \`profile_Image\` varchar(255) NULL`);
+        await queryRunner.query(`ALTER TABLE \`messages\` DROP COLUMN \`created_at\``);
+        await queryRunner.query(`ALTER TABLE \`messages\` ADD \`created_at\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP`);
+        await queryRunner.query(`ALTER TABLE \`messages\` CHANGE \`project_id\` \`project_id\` int NULL`);
+        await queryRunner.query(`ALTER TABLE \`messages\` CHANGE \`sender_id\` \`sender_id\` int NULL`);
+        await queryRunner.query(`ALTER TABLE \`messages\` CHANGE \`receiver_id\` \`receiver_id\` int NULL`);
+        await queryRunner.query(`ALTER TABLE \`projects\` CHANGE \`client_id\` \`client_id\` int NULL`);
+        await queryRunner.query(`ALTER TABLE \`users\` ADD UNIQUE INDEX \`IDX_97672ac88f789774dd47f7c8be\` (\`email\`)`);
+        await queryRunner.query(`ALTER TABLE \`users\` DROP COLUMN \`bio\``);
+        await queryRunner.query(`ALTER TABLE \`users\` ADD \`bio\` varchar(255) NULL`);
+        await queryRunner.query(`ALTER TABLE \`files\` DROP COLUMN \`file_type\``);
+        await queryRunner.query(`ALTER TABLE \`files\` ADD \`file_type\` varchar(255) NOT NULL`);
+        await queryRunner.query(`ALTER TABLE \`files\` DROP COLUMN \`uploaded_at\``);
+        await queryRunner.query(`ALTER TABLE \`files\` ADD \`uploaded_at\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP`);
+        await queryRunner.query(`ALTER TABLE \`milestones\` CHANGE \`status\` \`status\` enum ('pending', 'completed', 'paid') NOT NULL DEFAULT 'pending'`);
+        await queryRunner.query(`ALTER TABLE \`invoices\` CHANGE \`status\` \`status\` enum ('pending', 'paid') NOT NULL DEFAULT 'pending'`);
+        await queryRunner.query(`ALTER TABLE \`invoices\` DROP COLUMN \`created_at\``);
+        await queryRunner.query(`ALTER TABLE \`invoices\` ADD \`created_at\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)`);
+        await queryRunner.query(`ALTER TABLE \`skills\` ADD UNIQUE INDEX \`IDX_81f05095507fd84aa2769b4a52\` (\`name\`)`);
+        await queryRunner.query(`ALTER TABLE \`messages\` ADD CONSTRAINT \`FK_0139a4041dc028434fb8b89ae47\` FOREIGN KEY (\`project_id\`) REFERENCES \`projects\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`messages\` ADD CONSTRAINT \`FK_22133395bd13b970ccd0c34ab22\` FOREIGN KEY (\`sender_id\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`messages\` ADD CONSTRAINT \`FK_b561864743d235f44e70addc1f5\` FOREIGN KEY (\`receiver_id\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`projects\` ADD CONSTRAINT \`FK_ca29f959102228649e714827478\` FOREIGN KEY (\`client_id\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`projects\` ADD CONSTRAINT \`FK_e79eb056ed45de1f0b74c7769f5\` FOREIGN KEY (\`freelancer_id\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`bids\` ADD CONSTRAINT \`FK_7a9a4aa9b5fc8b4881fbc90d28a\` FOREIGN KEY (\`project_id\`) REFERENCES \`projects\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`bids\` ADD CONSTRAINT \`FK_402daf8cf5d3113be368c50a733\` FOREIGN KEY (\`freelancer_id\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`files\` ADD CONSTRAINT \`FK_b3c17c323fdc479a109e517f138\` FOREIGN KEY (\`project_id\`) REFERENCES \`projects\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`files\` ADD CONSTRAINT \`FK_a7435dbb7583938d5e7d1376041\` FOREIGN KEY (\`user_id\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`milestones\` ADD CONSTRAINT \`FK_2204463ea4c5c1872e1fb2b8ffb\` FOREIGN KEY (\`project_id\`) REFERENCES \`projects\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`invoices\` ADD CONSTRAINT \`FK_b4eae643df5fbd98341faf65ed7\` FOREIGN KEY (\`milestone_id\`) REFERENCES \`milestones\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+    }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`ALTER TABLE \`invoices\` DROP FOREIGN KEY \`FK_b4eae643df5fbd98341faf65ed7\``);
+        await queryRunner.query(`ALTER TABLE \`milestones\` DROP FOREIGN KEY \`FK_2204463ea4c5c1872e1fb2b8ffb\``);
+        await queryRunner.query(`ALTER TABLE \`files\` DROP FOREIGN KEY \`FK_a7435dbb7583938d5e7d1376041\``);
+        await queryRunner.query(`ALTER TABLE \`files\` DROP FOREIGN KEY \`FK_b3c17c323fdc479a109e517f138\``);
+        await queryRunner.query(`ALTER TABLE \`bids\` DROP FOREIGN KEY \`FK_402daf8cf5d3113be368c50a733\``);
+        await queryRunner.query(`ALTER TABLE \`bids\` DROP FOREIGN KEY \`FK_7a9a4aa9b5fc8b4881fbc90d28a\``);
+        await queryRunner.query(`ALTER TABLE \`projects\` DROP FOREIGN KEY \`FK_e79eb056ed45de1f0b74c7769f5\``);
+        await queryRunner.query(`ALTER TABLE \`projects\` DROP FOREIGN KEY \`FK_ca29f959102228649e714827478\``);
+        await queryRunner.query(`ALTER TABLE \`messages\` DROP FOREIGN KEY \`FK_b561864743d235f44e70addc1f5\``);
+        await queryRunner.query(`ALTER TABLE \`messages\` DROP FOREIGN KEY \`FK_22133395bd13b970ccd0c34ab22\``);
+        await queryRunner.query(`ALTER TABLE \`messages\` DROP FOREIGN KEY \`FK_0139a4041dc028434fb8b89ae47\``);
+        await queryRunner.query(`ALTER TABLE \`skills\` DROP INDEX \`IDX_81f05095507fd84aa2769b4a52\``);
+        await queryRunner.query(`ALTER TABLE \`invoices\` DROP COLUMN \`created_at\``);
+        await queryRunner.query(`ALTER TABLE \`invoices\` ADD \`created_at\` timestamp(0) NULL DEFAULT CURRENT_TIMESTAMP`);
+        await queryRunner.query(`ALTER TABLE \`invoices\` CHANGE \`status\` \`status\` enum ('pending', 'paid') NULL DEFAULT 'pending'`);
+        await queryRunner.query(`ALTER TABLE \`milestones\` CHANGE \`status\` \`status\` enum ('pending', 'completed', 'paid') NULL DEFAULT 'pending'`);
+        await queryRunner.query(`ALTER TABLE \`files\` DROP COLUMN \`uploaded_at\``);
+        await queryRunner.query(`ALTER TABLE \`files\` ADD \`uploaded_at\` timestamp NULL DEFAULT CURRENT_TIMESTAMP`);
+        await queryRunner.query(`ALTER TABLE \`files\` DROP COLUMN \`file_type\``);
+        await queryRunner.query(`ALTER TABLE \`files\` ADD \`file_type\` varchar(50) NOT NULL`);
+        await queryRunner.query(`ALTER TABLE \`users\` DROP COLUMN \`bio\``);
+        await queryRunner.query(`ALTER TABLE \`users\` ADD \`bio\` text NULL`);
+        await queryRunner.query(`ALTER TABLE \`users\` DROP INDEX \`IDX_97672ac88f789774dd47f7c8be\``);
+        await queryRunner.query(`ALTER TABLE \`projects\` CHANGE \`client_id\` \`client_id\` int NOT NULL`);
+        await queryRunner.query(`ALTER TABLE \`messages\` CHANGE \`receiver_id\` \`receiver_id\` int NOT NULL`);
+        await queryRunner.query(`ALTER TABLE \`messages\` CHANGE \`sender_id\` \`sender_id\` int NOT NULL`);
+        await queryRunner.query(`ALTER TABLE \`messages\` CHANGE \`project_id\` \`project_id\` int NOT NULL`);
+        await queryRunner.query(`ALTER TABLE \`messages\` DROP COLUMN \`created_at\``);
+        await queryRunner.query(`ALTER TABLE \`messages\` ADD \`created_at\` timestamp NULL DEFAULT CURRENT_TIMESTAMP`);
+        await queryRunner.query(`ALTER TABLE \`users\` DROP COLUMN \`profile_Image\``);
+        await queryRunner.query(`ALTER TABLE \`users\` ADD \`profile_image\` varchar(255) NULL`);
+        await queryRunner.query(`CREATE UNIQUE INDEX \`name\` ON \`skills\` (\`name\`)`);
+        await queryRunner.query(`CREATE INDEX \`milestone_id\` ON \`invoices\` (\`milestone_id\`)`);
+        await queryRunner.query(`CREATE INDEX \`project_id\` ON \`milestones\` (\`project_id\`)`);
+        await queryRunner.query(`CREATE INDEX \`user_id\` ON \`files\` (\`user_id\`)`);
+        await queryRunner.query(`CREATE INDEX \`project_id\` ON \`files\` (\`project_id\`)`);
+        await queryRunner.query(`CREATE INDEX \`project_id\` ON \`bids\` (\`project_id\`)`);
+        await queryRunner.query(`CREATE INDEX \`freelancer_id\` ON \`bids\` (\`freelancer_id\`)`);
+        await queryRunner.query(`CREATE UNIQUE INDEX \`email\` ON \`users\` (\`email\`)`);
+        await queryRunner.query(`CREATE INDEX \`freelancer_id\` ON \`projects\` (\`freelancer_id\`)`);
+        await queryRunner.query(`CREATE INDEX \`client_id\` ON \`projects\` (\`client_id\`)`);
+        await queryRunner.query(`CREATE INDEX \`sender_id\` ON \`messages\` (\`sender_id\`)`);
+        await queryRunner.query(`CREATE INDEX \`receiver_id\` ON \`messages\` (\`receiver_id\`)`);
+        await queryRunner.query(`CREATE INDEX \`project_id\` ON \`messages\` (\`project_id\`)`);
+        await queryRunner.query(`ALTER TABLE \`invoices\` ADD CONSTRAINT \`invoices_ibfk_1\` FOREIGN KEY (\`milestone_id\`) REFERENCES \`milestones\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`milestones\` ADD CONSTRAINT \`milestones_ibfk_1\` FOREIGN KEY (\`project_id\`) REFERENCES \`projects\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`files\` ADD CONSTRAINT \`files_ibfk_2\` FOREIGN KEY (\`user_id\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`files\` ADD CONSTRAINT \`files_ibfk_1\` FOREIGN KEY (\`project_id\`) REFERENCES \`projects\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`bids\` ADD CONSTRAINT \`bids_ibfk_2\` FOREIGN KEY (\`freelancer_id\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`bids\` ADD CONSTRAINT \`bids_ibfk_1\` FOREIGN KEY (\`project_id\`) REFERENCES \`projects\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`projects\` ADD CONSTRAINT \`projects_ibfk_2\` FOREIGN KEY (\`freelancer_id\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`projects\` ADD CONSTRAINT \`projects_ibfk_1\` FOREIGN KEY (\`client_id\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`messages\` ADD CONSTRAINT \`messages_ibfk_3\` FOREIGN KEY (\`receiver_id\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`messages\` ADD CONSTRAINT \`messages_ibfk_2\` FOREIGN KEY (\`sender_id\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`messages\` ADD CONSTRAINT \`messages_ibfk_1\` FOREIGN KEY (\`project_id\`) REFERENCES \`projects\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+    }
+
+}
