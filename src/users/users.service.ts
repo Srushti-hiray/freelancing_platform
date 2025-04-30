@@ -40,14 +40,27 @@ export class UsersService {
   async findFreelancers(skills?: string[]): Promise<User[]> {
     const query = this.usersRepository.createQueryBuilder('user')
       .where('user.role = :role', { role: 'freelancer' });
-
-      if (skills && skills.length > 0) {
+  
+    if (skills && skills.length > 0) {
+      // Create a condition that checks if the skills array contains all requested skills
+      query.andWhere((qb) => {
+        const subQuery = qb.subQuery()
+          .select('user.id')
+          .from(User, 'user')
+          .where('user.role = :role', { role: 'freelancer' });
         
+        // For each skill, add a condition that the skills array contains it
         skills.forEach((skill, index) => {
-         query.andWhere('user.skills LIKE :skill', { skill: `${skill}` });
+          const paramName = `skill${index}`;
+          subQuery.andWhere(`user.skills LIKE :${paramName}`, { 
+            [paramName]: `%${skill}%` 
+          });
         });
-      }
-
+        
+        return 'user.id IN ' + subQuery.getQuery();
+      });
+    }
+  
     return query.getMany();
   }
 

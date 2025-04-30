@@ -25,4 +25,6 @@ export class SkillsService {
     if (!skill) throw new Error('Skill not found');
     return skill;
   }
+
+  
 }

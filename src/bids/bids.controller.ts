@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, UseGuards, Request, ParseIntPipe } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param,Query, UseGuards, Request, ParseIntPipe } from '@nestjs/common';
 import { BidsService } from './bids.service';
 import { CreateBidDto } from './dto/bid.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
@@ -21,5 +21,11 @@ export class BidsController {
   @Get('project/:projectId')
   async findByProject(@Param('projectId', ParseIntPipe) projectId: number) {
     return this.bidsService.findByProject(projectId);
+  }
+  @UseGuards(JwtAuthGuard)
+  @Get('count')
+  async countBids(@Query('freelancerId') freelancerId: string) {
+    const count = await this.bidsService.countByFreelancer(Number(freelancerId));
+    return { count };
   }
 }

@@ -29,4 +29,7 @@ export class BidsService {
       freelancerId: bid.freelancer?.id
     }));
   }
+  async countByFreelancer(freelancerId: number): Promise<number> {
+    return this.bidsRepository.count({ where: { freelancer: { id: freelancerId } } });
+  }
 }
